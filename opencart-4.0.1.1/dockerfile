@@ -1,0 +1,19 @@
+FROM php:8.0-apache
+RUN apt-get update && apt-get install -y \
+        libzip-dev \
+                zip \
+		libfreetype6-dev \
+		libjpeg62-turbo-dev \
+		libpng-dev \
+	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+	&& docker-php-ext-install -j$(nproc) gd pdo pdo_mysql mysqli zip
+RUN a2enmod rewrite
+
+COPY upload/. /var/www/html/
+COPY upload/config-dist.php /var/www/html/config.php
+COPY upload/admin/config-dist.php /var/www/html/admin/config.php
+RUN chown -R www-data:www-data /var/www/html
+EXPOSE 80
+
+# docker build . -t kart-app
+# docker run -p 8080:80 kart-app
