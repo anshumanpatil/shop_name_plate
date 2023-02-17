@@ -2,6 +2,8 @@ version: '3.8'
 services:
   mariadb:
     image: docker.io/bitnami/mariadb:10.6
+    ports:
+      - "3306:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=shop_name_plate
       - MARIADB_USER=shop_name_plate
@@ -18,6 +20,18 @@ services:
       - '/Users/apple/projects/shop-name-plate/app/opencart_data:/var/www/html/'
     depends_on:
       - mariadb
+  phpmyadmin:
+      image: phpmyadmin
+      restart: always
+      ports:
+        - 5656:80
+      environment:
+        - PMA_ARBITRARY=1
+        - PMA_HOST=mariadb
+        - PMA_USER=shop_name_plate
+        - PMA_PASSWORD=shop_name_plate
+      depends_on:
+        - mariadb
 volumes:
   mariadb_data:
     driver: local
